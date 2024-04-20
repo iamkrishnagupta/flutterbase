@@ -27,8 +27,8 @@ class _SignupPageState extends State<SignupPage> {
           password: password,
         );
 
-        // Assuming you want to navigate the user to HomePage after signing up
-        Navigator.pushReplacement(
+      
+        Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => const HomePage(),
@@ -57,7 +57,7 @@ class _SignupPageState extends State<SignupPage> {
         padding: const EdgeInsets.all(12.0),
         child: Center(
           child: SingleChildScrollView(
-            // Added SingleChildScrollView for better usability
+          
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

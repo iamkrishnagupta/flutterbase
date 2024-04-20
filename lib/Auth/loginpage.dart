@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutterbase/Auth/signuppage.dart';
 import 'package:flutterbase/Components/ui_components.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutterbase/homepage.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,6 +14,33 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  login(String email, String password) async {
+     if (email.isEmpty || password.isEmpty) {
+      Components.customAlertBox(context, "Enter Required Fields");
+    } else {
+      try {
+        UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const HomePage(),
+          ),
+        );
+      }
+       
+     on FirebaseAuthException catch (e) {
+        // Detailed error handling
+        Components.customAlertBox(
+            context, e.message ?? "An unknown error occurred with Firebase.");
+      } catch (e) {
+        // General error handling
+        Components.customAlertBox(
+            context, "An error occurred. Please try again.");
+      }
+    }
+  }
+    
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +73,13 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(
                 height: 10,
               ),
-              Components.customButton(
-                () {},
-                "Login",
-              ),
+             Components.customButton(
+                  () => login(
+                    emailController.text.trim(),
+                    passwordController.text.trim(),
+                  ),
+                  "Login",
+                ),
               const SizedBox(
                 height: 10,
               ),
