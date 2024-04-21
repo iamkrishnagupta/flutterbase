@@ -27,7 +27,6 @@ class _SignupPageState extends State<SignupPage> {
           password: password,
         );
 
-      
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -57,7 +56,6 @@ class _SignupPageState extends State<SignupPage> {
         padding: const EdgeInsets.all(12.0),
         child: Center(
           child: SingleChildScrollView(
-          
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
