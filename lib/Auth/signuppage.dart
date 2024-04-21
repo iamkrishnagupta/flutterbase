@@ -53,7 +53,7 @@ class _SignupPageState extends State<SignupPage> {
         centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(20.0),
         child: Center(
           child: SingleChildScrollView(
             child: Column(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutterbase/Auth/resetpassword.dart';
 import 'package:flutterbase/Auth/signuppage.dart';
 import 'package:flutterbase/Components/ui_components.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -50,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
         centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(20.0),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -102,9 +103,20 @@ class _LoginPageState extends State<LoginPage> {
                       );
                     },
                     child: const Text('Try Signing Up!'),
-                  )
+                  ),
                 ],
-              )
+              ),
+              TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ResetPassword(),
+                        ),
+                      );
+                    },
+                    child: const Text('Forgot Password?'),
+                  )
             ],
           ),
         ),
