@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutterbase/Auth/resetpassword.dart';
-import 'package:flutterbase/Auth/signuppage.dart';
+import 'package:flutterbase/E-Auth/resetpassword.dart';
+import 'package:flutterbase/E-Auth/signuppage.dart';
 import 'package:flutterbase/Components/ui_components.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutterbase/homepage.dart';
