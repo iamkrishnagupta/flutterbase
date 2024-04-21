@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterbase/Components/ui_components.dart';
 
@@ -11,6 +14,22 @@ class SendData extends StatefulWidget {
 class _SendDataState extends State<SendData> {
   TextEditingController titleController = TextEditingController();
   TextEditingController descController = TextEditingController();
+
+  addData(String title, String desc) async {
+    if (title.isEmpty || desc.isEmpty) {
+      log('Enter all details');
+    } else {
+      FirebaseFirestore.instance.collection('Users').doc(title).set(
+        {
+          "title": title,
+          "description": desc,
+        },
+      ).then(
+        (value) => log('Data inserted.'),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,6 +41,7 @@ class _SendDataState extends State<SendData> {
         padding: const EdgeInsets.all(20.0),
         child: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Components.customTextField(
                 titleController,
@@ -37,7 +57,9 @@ class _SendDataState extends State<SendData> {
                 false,
               ),
               const SizedBox(height: 10),
-              Components.customButton(() {}, 'Send Data')
+              Components.customButton(() {
+                addData(titleController.text, descController.text);
+              }, 'Send Data')
             ],
           ),
         ),
