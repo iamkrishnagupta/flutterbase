@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 
 class Components {
-  static customTextField(TextEditingController controller, String hintText,
-      IconData iconData, bool isHide,   ) {
+  static customTextField(
+    TextEditingController controller,
+    String hintText,
+    IconData iconData,
+    bool isHide,
+  ) {
     return TextField(
       controller: controller,
       obscureText: isHide,

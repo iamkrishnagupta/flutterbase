@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutterbase/C-Storage/demopage.dart';
 import 'package:flutterbase/E-Auth/loginpage.dart';
 import 'package:flutterbase/F-Store/fetchdata.dart';
 import 'package:flutterbase/P-Auth/phoneauth.dart';
@@ -60,7 +61,9 @@ class HomePage extends StatelessWidget {
               },
               child: const Text('Try Phone Verification?'),
             ),
-            const SizedBox(height: 5,),
+            const SizedBox(
+              height: 5,
+            ),
             TextButton(
               onPressed: () {
                 Navigator.push(
@@ -70,7 +73,22 @@ class HomePage extends StatelessWidget {
                   ),
                 );
               },
-              child: const Text('Check Firestore?'),
+              child: const Text(
+                'Try Firestore?',
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const DemoPage(),
+                  ),
+                );
+              },
+              child: const Text(
+                'Try Cloud Storage?',
+              ),
             ),
           ],
         ),
