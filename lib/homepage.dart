@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutterbase/Auth/loginpage.dart';
 
 import 'Auth/signuppage.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
+  logOut(BuildContext context) async {
+    FirebaseAuth.instance.signOut().then(
+          (value) => Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const LoginPage(),
+            ),
+          ),
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home Page'),
-
       ),
       body: Center(
         child: Column(
@@ -23,14 +35,14 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () {
-                 Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const SignupPage(),
-          ),
-        );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => logOut(context),
+                  ),
+                );
               },
-              child: const Text('Back!'),
+              child: const Text('Log Out!'),
             ),
           ],
         ),

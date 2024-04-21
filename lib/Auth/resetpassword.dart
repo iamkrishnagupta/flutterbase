@@ -12,12 +12,15 @@ class ResetPassword extends StatefulWidget {
 class _ResetPasswordState extends State<ResetPassword> {
   TextEditingController emailController = TextEditingController();
   resetPassword(String email) async {
-    email != null
-        ? FirebaseAuth.instance.sendPasswordResetEmail(email: email)
-        : Components.customAlertBox(
-            context,
-            'Enter an email',
-          );
+    if (email.isEmpty) {
+      return Components.customAlertBox(
+        context,
+        'Enter an email',
+      );
+    }
+    FirebaseAuth.instance.sendPasswordResetEmail(
+      email: email,
+    );
   }
 
   @override
@@ -42,11 +45,14 @@ class _ResetPasswordState extends State<ResetPassword> {
                 const SizedBox(
                   height: 15,
                 ),
-                Components.customButton(() {
-                  resetPassword(
-                    emailController.text.trim(),
-                  );
-                }, 'Reset')
+                Components.customButton(
+                  () {
+                    resetPassword(
+                      emailController.text.trim(),
+                    );
+                  },
+                  'Reset',
+                )
               ],
             ),
           ),
