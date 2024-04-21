@@ -21,12 +21,12 @@ class _DemoPageState extends State<DemoPage> {
 
   void signUp(String email, String password) async {
     if (email.isEmpty || password.isEmpty || pickedImage == null) {
-      Components.customAlertBox(
-          context, "Please fill all fields and select an image.");
+      showSnackbar("Please fill all fields and select an image.");
       return;
     }
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -34,12 +34,10 @@ class _DemoPageState extends State<DemoPage> {
       uploadData();
     } on FirebaseAuthException catch (e) {
       log('Firebase Auth Error: ${e.message}');
-      Components.customAlertBox(
-          context, e.message ?? "An unknown error occurred with Firebase.");
+      showSnackbar(e.message ?? "An unknown error occurred with Firebase.");
     } catch (e) {
       log('General Error during signUp: $e');
-      Components.customAlertBox(
-          context, "An error occurred. Please try again.");
+      showSnackbar("An error occurred. Please try again.");
     }
   }
 
@@ -86,6 +84,7 @@ class _DemoPageState extends State<DemoPage> {
       }
     } catch (e) {
       log('Error picking image: $e');
+      showSnackbar("Failed to pick image.");
     }
   }
 
@@ -112,7 +111,7 @@ class _DemoPageState extends State<DemoPage> {
                     : const CircleAvatar(
                         radius: 80,
                         child: Icon(
-                          Icons.person,
+                          Icons.add_a_photo_rounded,
                           size: 80,
                         ),
                       ),
@@ -145,68 +144,45 @@ class _DemoPageState extends State<DemoPage> {
     );
   }
 
-   Future<void> uploadData() async {
-  if (pickedImage == null) {
-    log('No image selected or picked image is null.');
-    return;
+  void showSnackbar(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
-  log('File to upload: ${pickedImage!.path}');
-  try {
-    String filePath = 'Profile Images/${emailController.text}';
-    log('Firebase Storage Path: $filePath');
 
-    UploadTask uploadTask = FirebaseStorage.instance
-        .ref(filePath)
-        .putFile(pickedImage!);
-    log('Upload task started');
+  Future<void> uploadData() async {
+    if (pickedImage == null) {
+      log('No image selected or picked image is null.');
+      showSnackbar("No image selected.");
+      return;
+    }
+    log('File to upload: ${pickedImage!.path}');
+    try {
+      String filePath = 'Profile Images/${emailController.text}';
+      log('Firebase Storage Path: $filePath');
 
-    // Listen to the upload task
-    uploadTask.snapshotEvents.listen(
-      (TaskSnapshot snapshot) {
-        switch (snapshot.state) {
-          case TaskState.running:
-            final progress = 100.0 * (snapshot.bytesTransferred / snapshot.totalBytes);
-            log('Upload is $progress% complete.');
-            break;
-          case TaskState.paused:
-            log('Upload is paused.');
-            break;
-          case TaskState.success:
-            log('Upload is successfully completed.');
-            break;
-          case TaskState.canceled:
-            log('Upload is canceled.');
-            break;
-          case TaskState.error:
-            log('Upload failed with an error.');
-            break;
-        }
-      }, 
-      onError: (e) {
-        log('Upload failed with error: $e');
-        Components.customAlertBox(context, "Upload failed: $e");
-      }
-    );
+      UploadTask uploadTask =
+          FirebaseStorage.instance.ref(filePath).putFile(pickedImage!);
+      log('Upload task started');
 
-    // Await completion of the upload
-    final taskSnapshot = await uploadTask;
-    log('File uploaded to Firebase Storage');
+      // Await completion of the upload
+      final taskSnapshot = await uploadTask;
+      log('File uploaded to Firebase Storage');
 
-    final url = await taskSnapshot.ref.getDownloadURL();
-    log('Download URL obtained: $url');
+      final url = await taskSnapshot.ref.getDownloadURL();
+      log('Download URL obtained: $url');
 
-    await FirebaseFirestore.instance
-        .collection("Users")
-        .doc(emailController.text)
-        .set({
-      "email": emailController.text,
-      "image": url,
-    });
-    log('User data uploaded successfully to Firestore');
-  } catch (e) {
-    log('Error uploading user data: $e');
-    Components.customAlertBox(
-        context, "Failed to upload data: ${e.toString()}");
+      await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(emailController.text)
+          .set({
+        "email": emailController.text,
+        "image": url,
+      });
+      log('User data uploaded successfully to Firestore');
+      showSnackbar("Upload successful!");
+    } catch (e) {
+      log('Error uploading user data: $e');
+      showSnackbar("Failed to upload data: ${e.toString()}");
+    }
   }
-}
 }
