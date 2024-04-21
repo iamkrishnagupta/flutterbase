@@ -1,6 +1,8 @@
 import 'dart:developer';
 import 'dart:io';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterbase/Components/ui_components.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,7 +19,30 @@ class _DemoPageState extends State<DemoPage> {
   TextEditingController passwordController = TextEditingController();
   File? pickedImage;
 
-  // Function to display the image selection dialog
+  void signUp(String email, String password) async {
+    if (email.isEmpty || password.isEmpty || pickedImage == null) {
+      Components.customAlertBox(
+          context, "Please fill all fields and select an image.");
+      return;
+    }
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      log('User registered: ${userCredential.user!.email}');
+      uploadData();
+    } on FirebaseAuthException catch (e) {
+      log('Firebase Auth Error: ${e.message}');
+      Components.customAlertBox(
+          context, e.message ?? "An unknown error occurred with Firebase.");
+    } catch (e) {
+      log('General Error during signUp: $e');
+      Components.customAlertBox(
+          context, "An error occurred. Please try again.");
+    }
+  }
+
   void showAlertBox() {
     showDialog(
       context: context,
@@ -50,7 +75,6 @@ class _DemoPageState extends State<DemoPage> {
     );
   }
 
-  // Function to handle image picking
   Future<void> pickImage(ImageSource source) async {
     try {
       final picker = ImagePicker();
@@ -61,7 +85,7 @@ class _DemoPageState extends State<DemoPage> {
         });
       }
     } catch (e) {
-      log(e.toString());
+      log('Error picking image: $e');
     }
   }
 
@@ -80,14 +104,18 @@ class _DemoPageState extends State<DemoPage> {
             children: [
               InkWell(
                 onTap: showAlertBox,
-                child: CircleAvatar(
-                  radius: 80,
-                  backgroundImage:
-                      pickedImage != null ? FileImage(pickedImage!) : null,
-                  child: pickedImage == null
-                      ? const Icon(Icons.add_a_photo_rounded, size: 80)
-                      : null,
-                ),
+                child: pickedImage != null
+                    ? CircleAvatar(
+                        radius: 80,
+                        backgroundImage: FileImage(pickedImage!),
+                      )
+                    : const CircleAvatar(
+                        radius: 80,
+                        child: Icon(
+                          Icons.person,
+                          size: 80,
+                        ),
+                      ),
               ),
               const SizedBox(height: 20),
               Components.customTextField(
@@ -100,12 +128,14 @@ class _DemoPageState extends State<DemoPage> {
               Components.customTextField(
                 passwordController,
                 "Password",
-                Icons.password,
+                Icons.lock_outline,
                 true,
               ),
               const SizedBox(height: 20),
               Components.customButton(
-                () {},
+                () {
+                  signUp(emailController.text, passwordController.text);
+                },
                 'Sign Up',
               )
             ],
@@ -114,4 +144,69 @@ class _DemoPageState extends State<DemoPage> {
       ),
     );
   }
+
+   Future<void> uploadData() async {
+  if (pickedImage == null) {
+    log('No image selected or picked image is null.');
+    return;
+  }
+  log('File to upload: ${pickedImage!.path}');
+  try {
+    String filePath = 'Profile Images/${emailController.text}';
+    log('Firebase Storage Path: $filePath');
+
+    UploadTask uploadTask = FirebaseStorage.instance
+        .ref(filePath)
+        .putFile(pickedImage!);
+    log('Upload task started');
+
+    // Listen to the upload task
+    uploadTask.snapshotEvents.listen(
+      (TaskSnapshot snapshot) {
+        switch (snapshot.state) {
+          case TaskState.running:
+            final progress = 100.0 * (snapshot.bytesTransferred / snapshot.totalBytes);
+            log('Upload is $progress% complete.');
+            break;
+          case TaskState.paused:
+            log('Upload is paused.');
+            break;
+          case TaskState.success:
+            log('Upload is successfully completed.');
+            break;
+          case TaskState.canceled:
+            log('Upload is canceled.');
+            break;
+          case TaskState.error:
+            log('Upload failed with an error.');
+            break;
+        }
+      }, 
+      onError: (e) {
+        log('Upload failed with error: $e');
+        Components.customAlertBox(context, "Upload failed: $e");
+      }
+    );
+
+    // Await completion of the upload
+    final taskSnapshot = await uploadTask;
+    log('File uploaded to Firebase Storage');
+
+    final url = await taskSnapshot.ref.getDownloadURL();
+    log('Download URL obtained: $url');
+
+    await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(emailController.text)
+        .set({
+      "email": emailController.text,
+      "image": url,
+    });
+    log('User data uploaded successfully to Firestore');
+  } catch (e) {
+    log('Error uploading user data: $e');
+    Components.customAlertBox(
+        context, "Failed to upload data: ${e.toString()}");
+  }
+}
 }
