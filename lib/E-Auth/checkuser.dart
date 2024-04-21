@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterbase/E-Auth/loginpage.dart';
-import 'package:flutterbase/homepage.dart';
+import 'package:flutterbase/E-Auth/homepage.dart';
 
 class CheckUser extends StatefulWidget {
   const CheckUser({super.key});

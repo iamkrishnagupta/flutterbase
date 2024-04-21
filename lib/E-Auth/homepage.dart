@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutterbase/E-Auth/loginpage.dart';
+import 'package:flutterbase/P-Auth/phoneauth.dart';
 
-import 'E-Auth/signuppage.dart';
+import 'signuppage.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -44,6 +45,20 @@ class HomePage extends StatelessWidget {
               },
               child: const Text('Log Out!'),
             ),
+            const SizedBox(
+              height: 10,
+            ),
+            TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PhoneAuth(),
+                        ),
+                      );
+                    },
+                    child: const Text('Try Phone Verification?'),
+                  ),
           ],
         ),
       ),
