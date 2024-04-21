@@ -1,3 +1,3 @@
 # flutterbase
 
-A new Flutter project.
+A new Flutter and Firebase Project.
