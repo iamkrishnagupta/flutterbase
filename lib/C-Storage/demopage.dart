@@ -11,6 +11,33 @@ class DemoPage extends StatefulWidget {
 class _DemoPageState extends State<DemoPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  showAlertBox() {
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          title: Text(
+            'Pick Image From',
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.camera_alt),
+                title: Text('Camera'),
+              ),
+              ListTile(
+                leading: Icon(Icons.image),
+                title: Text('Gallery'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,9 +51,14 @@ class _DemoPageState extends State<DemoPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const CircleAvatar(
-                radius: 80,
-                child: Icon(Icons.person, size: 80),
+              InkWell(
+                onTap: () {
+                  showAlertBox();
+                },
+                child: const CircleAvatar(
+                  radius: 80,
+                  child: Icon(Icons.add_a_photo_rounded, size: 80),
+                ),
               ),
               const SizedBox(
                 height: 20,
@@ -47,8 +79,9 @@ class _DemoPageState extends State<DemoPage> {
                 true,
               ),
               const SizedBox(
-                height: 10,
+                height: 20,
               ),
+              Components.customButton(() {}, 'Sign Up')
             ],
           ),
         ),
