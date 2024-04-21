@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutterbase/E-Auth/loginpage.dart';
+import 'package:flutterbase/F-Store/fetchdata.dart';
 import 'package:flutterbase/P-Auth/phoneauth.dart';
 
 import 'signuppage.dart';
@@ -49,16 +50,28 @@ class HomePage extends StatelessWidget {
               height: 10,
             ),
             TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const PhoneAuth(),
-                        ),
-                      );
-                    },
-                    child: const Text('Try Phone Verification?'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PhoneAuth(),
                   ),
+                );
+              },
+              child: const Text('Try Phone Verification?'),
+            ),
+            const SizedBox(height: 5,),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FetchData(),
+                  ),
+                );
+              },
+              child: const Text('Check Firestore?'),
+            ),
           ],
         ),
       ),
